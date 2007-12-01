@@ -1,9 +1,4 @@
-"Press any characters to get their ASCII codes, then press escape to quit\n"
 import sys
-try:
-	from curses import getch
-except ImportError:
-	from msvcrt import getch
 
 class Program:
 	def __init__(self):
@@ -21,14 +16,14 @@ class Program:
 		return "%s\nProgram Data: %s\nLabels: %s\nData Stack: %s\nHeap: %s\nProgram counter: %d\nPC Stack: %s" % (str(self),self.programdata,self.labels,self.stack,self.heap,self.programcounter,self.pcstack)
 
 class Opcodes: # the numbers themselves are meaningless - they just have to be unique
-        # Axx - stack ops
+	# Axx - stack ops
 	Push = 0            # AA num    - push num to stack
 	Dup = 1             # ACA       - push copy of TOS (top of stack)
 	Swap = 2            # ACB       - swap TOS and TOS-1
 	Discard = 3         # ACC       - pop and discard TOS
 	Ref = 4             # ABA num   - push copy of TOS-num
 	Slide = 5           # ABC num   - pop and discard TOS-1 through TOS-num - keep TOS
-                            #           - equiv to ACB ACC num times
+	                    #           - equiv to "ACB ACC" num times
 
 	# BAxx - math ops
 	Plus = 6            # BAAA      - push TOS-1 + TOS
@@ -37,7 +32,7 @@ class Opcodes: # the numbers themselves are meaningless - they just have to be u
 	Divide = 9          # BABA      - push TOS-1 / TOS (floored)
 	Modulo = 10         # BABB      - push TOS-1 % TOS
 
-        # BBx - heap ops
+	# BBx - heap ops
 	Store = 11          # BBA       - write TOS to address TOS-1
 	Retrieve = 12       # BBB       - read from address TOS
 
@@ -48,6 +43,7 @@ class Opcodes: # the numbers themselves are meaningless - they just have to be u
 	JumpZero = 16       # CBA label - jump if TOS is zero
 	JumpNeg = 17        # CBB label - jump if TOS is <0
 	Return = 18         # CBC       - return from subroutine
+	Trace = 24          # CCB       - print core dump
 	End = 19            # CCC       - stop executing program
 
 	# BCxx - I/O ops
@@ -119,7 +115,7 @@ class Ref(Instruction):
 	opcode = Opcodes.Ref
 	def __init__(self, codeloc, location):
 		self.codeloc = codeloc
-		self.location = -location
+		self.location = -location - 1
 	def __call__(self, program):
 		try:
 			program.stack.append(program.stack[self.location])
@@ -144,7 +140,7 @@ class Slide(Instruction):
 				print "Error: Slide value larger than stack size at byte 0x%X (line %d char %d)" % self.codeloc
 			program.programcounter = None
 	def __str__(self):
-		return "<Slide>" % (-self.quantity + 1)
+		return "<Slide %d>" % (-self.quantity + 1)
 	__repr__ = __str__
 
 class Plus(Instruction):
@@ -401,11 +397,11 @@ class InputChar(Instruction):
 		self.codeloc = codeloc
 	def __call__(self, program):
 		try:
-			a = getch()
-			if a == '\r':
-				a = '\n'
-			sys.stdout.write(a) # comment to disable typing echo
-			program.heap[program.stack.pop()] = ord(a)
+			a = sys.stdin.read(1)
+			if (a == ''):
+				program.heap[program.stack.pop()] = -1
+			else:
+				program.heap[program.stack.pop()] = ord(a)
 		except IndexError:
 			print "Error: InputChar on empty stack at byte 0x%X (line %d char %d)" % self.codeloc
 			program.programcounter = None
@@ -418,25 +414,7 @@ class InputNum(Instruction):
 		self.codeloc = codeloc
 	def __call__(self, program):
 		try:
-			# write own routine using getch() because the last getch()'ed
-			# character is at the start of the sys.stdin.readline() input
-			# for some reason :-/
-			a = ""
-			b = ""
-			while b != "\n":
-				a += b
-				b = getch()
-				if b == "\r": # don't want to echo a \r for an enter
-					b = "\n"
-				if b == "\b": # backspace
-					if len(a) > 0:
-						sys.stdout.write("\b \b") # erase the char
-						a = a[:-1]
-					else:
-						sys.stdout.write("\a") # bell
-					b = "" # don't add the \b to a
-				sys.stdout.write(b)
-			program.heap[program.stack.pop()] = int(a)
+			program.heap[program.stack.pop()] = int(sys.stdin.readline())
 		except IndexError:
 			print "Error: InputNum on empty stack at byte 0x%X (line %d char %d)" % self.codeloc
 			program.programcounter = None
@@ -445,6 +423,15 @@ class InputNum(Instruction):
 			program.programcounter = None
 	def __str__(self):
 		return "<InputNum>"
+	__repr__ = __str__
+class Trace(Instruction):
+	opcode = Opcodes.Trace
+	def __init__(self, codeloc):
+		self.codeloc = codeloc
+	def __call__(self, program):
+		print repr(program)
+	def __str__(self):
+		return "<Trace>"
 	__repr__ = __str__
 
 def vm(prog):

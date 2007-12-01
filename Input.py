@@ -7,7 +7,7 @@ C = "\n"
    For convenience, three input characters 
        A => space, B => tab, C => either of CR/LF
 
-Numbers are binary (A=0, B=1, C=terminator)
+Numbers are binary sign-and-modulus (A=0, B=1, C=terminator)
 Strings are sequences of binary characters, terminated by C.
 
 We have:
@@ -57,7 +57,7 @@ def execute(src):
 		#print repr(prog) # uncomment to dump the contents of the program to stdout
 		Program.vm (prog)
 
-# use a DFA for the huffman tree
+# DFA for the opcode tree
 # format: DFA[(state,letter)] = state or (opcodeclass, None|int|str) or "tokenlist for error msg"
 DFA = {(0,A): 1, (0,B): 4, (0,C): 12,
        (1,A): (Program.Push, int), (1,B): 2, (1,C): 3,
@@ -74,7 +74,7 @@ DFA = {(0,A): 1, (0,B): 4, (0,C): 12,
        (12,A): 13, (12,B): 14, (12,C): 15,
        (13,A): (Program.Label, str), (13,B): (Program.Call, str), (13,C): (Program.Jump, str),
        (14,A): (Program.JumpZero, str), (14,B): (Program.JumpNeg, str), (14,C): (Program.Return, None),
-       (15,A): "[LF][LF][SP]", (15,B): "[LF][LF][TB]", (15,C): (Program.End, None)}
+       (15,A): "[LF][LF][SP]", (15,B): (Program.Trace, None), (15,C): (Program.End, None)}
 
 def parse(src):
 	i = 0;
@@ -98,12 +98,12 @@ def parse(src):
 			state = 0
 			opcode,parameter = next
 			if parameter is int:
-				(x,i) = parseNumber(src, i + 1)
+				(x,i) = parseNumber(src, i+1)
 				lines += 1 # parseNumber will end on a \n
 				lastnewline = i
 				prog.programdata.append(opcode(tokenstart, x))
 			elif parameter is str:
-				(x,i) = parseString(src, i + 1)
+				(x,i) = parseString(src, i+1)
 				lines += 1
 				lastnewline = i
 				prog.programdata.append(opcode(tokenstart, x))
@@ -111,6 +111,7 @@ def parse(src):
 				prog.programdata.append(opcode(tokenstart))
 		else: # invalid state
 			print "Error parsing script: %s is not a valid command at byte 0x%X (line %d char %d)\n" % ((next,) + tokenstart)
+			print "Program so far: ", repr(prog);
 			return None
 		i += 1
 	# find all the labels
@@ -142,9 +143,9 @@ def parseNumber(string, index):
 	else:
 		return (a,index)
 
-# storing a string (only used for labels) as eg "100101001" or "\t  \t \t  \t" would take up too
-# much space, but storing it as a number like parseNumber would mean 001 and 0001 wouldn't be
-# unique - so store as a tuple of length and value, so they'd be (3,1) and (4,1) and hence unique
+# storing a string (only used for labels) as eg "100101001" or "\t  \t \t  \t" would take up a lot
+# of pointless space, but storing it as a number like parseNumber would mean 001 and 0001 wouldn't
+# be unique - so store as a tuple of length and value, so they'd be (3,1) and (4,1) and hence unique
 def parseString(string, index):
 	a = 0L;
 	length = 0;
