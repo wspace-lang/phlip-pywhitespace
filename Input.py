@@ -4,7 +4,7 @@ B = "\t"
 C = "\n"
 """
    Input to the whitespace VM.
-   For convenience, three input characters 
+   For convenience, three input characters
        A => space, B => tab, C => either of CR/LF
 
 Numbers are binary sign-and-modulus (A=0, B=1, C=terminator)
@@ -13,36 +13,39 @@ Strings are sequences of binary characters, terminated by C.
 We have:
 
 * Stack instructions (Preceded by A)
-     Push (Integer)    A
-     Dup           CA
-     Swap          CB
-     Discard       CC
+     Push num       A
+     Dup            CA
+     Swap           CB
+     Discard        CC
+     Ref num        BA
+     Slide num      BC
 
 * Arithmetic (Preceded by BA)
-     Plus          AA
-     Minus         AB
-     Times         AC
-     Divide        BA
-     Modulo        BB
+     Plus           AA
+     Minus          AB
+     Times          AC
+     Divide         BA
+     Modulo         BB
 
 * Heap access (Preceded by BB)
-     Store         A
-     Retrieve      B
+     Store          A
+     Retrieve       B
 
 * Control     (Preceded by C)
-     Label String  AA
-     Call Label    AB
-     Jump Label    AC
-     If Zero Label BA
-     If Neg Label  BB
-     Return        BC
-     End           CC
+     Label string   AA
+     Call label     AB
+     Jump label     AC
+     JumpZero label BA
+     JumpNeg label  BB
+     Return         BC
+     Trace          CB
+     End            CC
 
 * IO instructions (Preceded by BC)
-     OutputChar    AA
-     OutputNum     AB
-     ReadChar      BA
-     ReadNum       BB
+     OutputChar     AA
+     OutputNum      AB
+     ReadChar       BA
+     ReadNum        BB
 """
 
 def load(fname):
@@ -77,8 +80,8 @@ DFA = {(0,A): 1, (0,B): 4, (0,C): 12,
        (15,A): "[LF][LF][SP]", (15,B): (Program.Trace, None), (15,C): (Program.End, None)}
 
 def parse(src):
-	i = 0;
-	prog = Program.Program();
+	i = 0
+	prog = Program.Program()
 	lines,lastnewline = 1,-1 # so can give error locations as line:char
 	tokenstart = 0,1,1 # byte, line, char
 	state = 0
@@ -110,18 +113,18 @@ def parse(src):
 			else:
 				prog.programdata.append(opcode(tokenstart))
 		else: # invalid state
-			print "Error parsing script: %s is not a valid command at byte 0x%X (line %d char %d)\n" % ((next,) + tokenstart)
-			print "Program so far: ", repr(prog);
+			print("Error parsing script: %s is not a valid command at byte 0x%X (line %d char %d)\n" % ((next,) + tokenstart))
+			print("Program so far: ", repr(prog))
 			return None
 		i += 1
 	# find all the labels
 	for i in range(len(prog.programdata)):
 		if prog.programdata[i].opcode == Program.Opcodes.Label:
-			prog.labels[prog.programdata[i].label] = i;
-	return prog;
+			prog.labels[prog.programdata[i].label] = i
+	return prog
 
 def parseNumber(string, index):
-	a = 0L;
+	a = 0
 	neg = None
 	while neg == None:
 		if string[index] == A:
@@ -147,8 +150,8 @@ def parseNumber(string, index):
 # of pointless space, but storing it as a number like parseNumber would mean 001 and 0001 wouldn't
 # be unique - so store as a tuple of length and value, so they'd be (3,1) and (4,1) and hence unique
 def parseString(string, index):
-	a = 0L;
-	length = 0;
+	a = 0
+	length = 0
 	while string[index] != '\n':
 		if string[index] == " ":
 			a <<= 1

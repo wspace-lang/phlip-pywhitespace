@@ -77,7 +77,7 @@ class Dup(Instruction):
 		try:
 			program.stack.append(program.stack[-1])
 		except IndexError:
-			print "Error: Dup in empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: Dup in empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Dup>"
@@ -91,9 +91,9 @@ class Swap(Instruction):
 			program.stack[-1],program.stack[-2] = program.stack[-2],program.stack[-1]
 		except IndexError:
 			if len(program.stack) == 0:
-				print "Error: Swap in stack with only one element at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Swap in stack with only one element at byte 0x%X (line %d char %d)" % self.codeloc)
 			else:
-				print "Error: Swap in empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Swap in empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Swap>"
@@ -106,7 +106,7 @@ class Discard(Instruction):
 		try:
 			program.stack.pop()
 		except IndexError:
-			print "Error: Discard from empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: Discard from empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Discard>"
@@ -120,7 +120,7 @@ class Ref(Instruction):
 		try:
 			program.stack.append(program.stack[self.location])
 		except IndexError:
-			print "Error: Ref value larger than stack size at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: Ref value larger than stack size at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Ref %d>" % -self.location
@@ -135,9 +135,9 @@ class Slide(Instruction):
 			program.stack = program.stack[0:self.quantity] + [program.stack[-1]]
 		except IndexError:
 			if len(program.stack) == 0:
-				print "Error: Slide from empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Slide from empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			else:
-				print "Error: Slide value larger than stack size at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Slide value larger than stack size at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Slide %d>" % (-self.quantity + 1)
@@ -154,9 +154,9 @@ class Plus(Instruction):
 			program.stack.append(x + y)
 		except IndexError:
 			if len(program.stack) == 0:
-				print "Error: Plus with empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Plus with empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			else:
-				print "Error: Plus with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Plus with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Plus>"
@@ -172,9 +172,9 @@ class Minus(Instruction):
 			program.stack.append(x - y)
 		except IndexError:
 			if len(program.stack) == 0:
-				print "Error: Minus with empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Minus with empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			else:
-				print "Error: Minus with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Minus with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Minus>"
@@ -190,9 +190,9 @@ class Times(Instruction):
 			program.stack.append(x * y)
 		except IndexError:
 			if len(program.stack) == 0:
-				print "Error: Times with empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Times with empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			else:
-				print "Error: Times with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Times with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Times>"
@@ -205,12 +205,12 @@ class Divide(Instruction):
 		try:
 			y = program.stack.pop()
 			x = program.stack.pop()
-			program.stack.append(x / y)
+			program.stack.append(x // y)
 		except IndexError:
 			if len(program.stack) == 0:
-				print "Error: Divide with empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Divide with empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			else:
-				print "Error: Divide with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Divide with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Divide>"
@@ -226,9 +226,9 @@ class Modulo(Instruction):
 			program.stack.append(x % y)
 		except IndexError:
 			if len(program.stack) == 0:
-				print "Error: Modulo with empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Modulo with empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			else:
-				print "Error: Modulo with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Modulo with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Modulo>"
@@ -245,9 +245,9 @@ class Store(Instruction):
 			program.heap[addr] = val
 		except IndexError:
 			if len(program.stack) == 0:
-				print "Error: Store with empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Store with empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			else:
-				print "Error: Store with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc
+				print("Error: Store with only one stack entry at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Store>"
@@ -261,10 +261,10 @@ class Retrieve(Instruction):
 			addr = program.stack.pop()
 			program.stack.append(program.heap[addr])
 		except IndexError:
-			print "Error: Retrieve with empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: Retrieve with empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 		except KeyError:
-			print "Error: Retrieve from an address not stored to yet at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: Retrieve from an address not stored to yet at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Retrieve>"
@@ -290,7 +290,7 @@ class Call(Instruction):
 			program.pcstack.append(program.programcounter)
 			program.programcounter = program.labels[self.label]
 		except KeyError:
-			print "Error: Call to undefined label at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: Call to undefined label at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Call %s>" % repr(self.label)
@@ -304,7 +304,7 @@ class Jump(Instruction):
 		try:
 			program.programcounter = program.labels[self.label]
 		except KeyError:
-			print "Error: Jump to undefined label at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: Jump to undefined label at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Jump %s>" % repr(self.label)
@@ -319,7 +319,7 @@ class JumpZero(Instruction):
 			if program.stack.pop() == 0:
 				program.programcounter = program.labels[self.label]
 		except KeyError:
-			print "Error: JumpZero to undefined label at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: JumpZero to undefined label at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<JumpZero %s>" % repr(self.label)
@@ -334,7 +334,7 @@ class JumpNeg(Instruction):
 			if program.stack.pop() < 0:
 				program.programcounter = program.labels[self.label]
 		except KeyError:
-			print "Error: JumpNeg to undefined label at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: JumpNeg to undefined label at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<JumpNeg %s>" % repr(self.label)
@@ -347,7 +347,7 @@ class Return(Instruction):
 		try:
 			program.programcounter = program.pcstack.pop()
 		except IndexError:
-			print "Error: Return without Call at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: Return without Call at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<Return>"
@@ -370,10 +370,10 @@ class OutputChar(Instruction):
 		try:
 			sys.stdout.write(chr(program.stack.pop()))
 		except ValueError:
-			print "Error: OutputChar value not in range 0-255 at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: OutputChar value not in range 0-255 at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 		except IndexError:
-			print "Error: OutputChar on empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: OutputChar on empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<OutputChar>"
@@ -386,7 +386,7 @@ class OutputNum(Instruction):
 		try:
 			sys.stdout.write(str(program.stack.pop()))
 		except IndexError:
-			print "Error: OutputNum on empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: OutputNum on empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<OutputNum>"
@@ -397,13 +397,14 @@ class InputChar(Instruction):
 		self.codeloc = codeloc
 	def __call__(self, program):
 		try:
+			sys.stdout.flush()
 			a = sys.stdin.read(1)
 			if (a == ''):
 				program.heap[program.stack.pop()] = -1
 			else:
 				program.heap[program.stack.pop()] = ord(a)
 		except IndexError:
-			print "Error: InputChar on empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: InputChar on empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<InputChar>"
@@ -414,12 +415,13 @@ class InputNum(Instruction):
 		self.codeloc = codeloc
 	def __call__(self, program):
 		try:
+			sys.stdout.flush()
 			program.heap[program.stack.pop()] = int(sys.stdin.readline())
 		except IndexError:
-			print "Error: InputNum on empty stack at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: InputNum on empty stack at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 		except ValueError:
-			print "Error: Entered value not a number for InputNum at byte 0x%X (line %d char %d)" % self.codeloc
+			print("Error: Entered value not a number for InputNum at byte 0x%X (line %d char %d)" % self.codeloc)
 			program.programcounter = None
 	def __str__(self):
 		return "<InputNum>"
@@ -429,13 +431,13 @@ class Trace(Instruction):
 	def __init__(self, codeloc):
 		self.codeloc = codeloc
 	def __call__(self, program):
-		print repr(program)
+		print(repr(program))
 	def __str__(self):
 		return "<Trace>"
 	__repr__ = __str__
 
 def vm(prog):
-	while prog.programcounter >= 0:
+	while prog.programcounter is not None:
 		a = prog.programdata[prog.programcounter]
 		prog.programcounter += 1
 		#sys.stdout.write(str(a)) # uncomment to perform trace
