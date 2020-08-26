@@ -86,8 +86,10 @@ def parse(src):
 	tokenstart = 0,1,1 # byte, line, char
 	state = 0
 	while i < len(src):
-		while src[i] not in (A,B,C):
+		while i < len(src) and src[i] not in (A,B,C):
 			i += 1
+		if i >= len(src):
+			break
 		if state == 0:
 			tokenstart = (i,lines,i-lastnewline)
 		if src[i] == "\n":
