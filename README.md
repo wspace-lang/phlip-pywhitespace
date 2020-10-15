@@ -4,7 +4,7 @@ by Phillip Bradbury, licensed under [GPLv2](COPYING)
 
 ## Whitespace mailing list
 
-Posted [3 Aug 2004 12:27:27 BST](https://web.archive.org/web/20141011193201/http://compsoc.dur.ac.uk/archives/whitespace/2004-August/000048.html)
+Posted [2004-08-03 12:27:27 +0100](https://web.archive.org/web/20141011193201/http://compsoc.dur.ac.uk/archives/whitespace/2004-August/000048.html)
 
 I just saw your site and I think whitespace is quite clever ;)
 
@@ -62,7 +62,7 @@ Christmas comes but once per 31.6887nHz cycle
 
 ## Whitespace mailing list, update
 
-Posted [10 Dec 2007 10:07:39 GMT](https://web.archive.org/web/20161009051032/http://compsoc.dur.ac.uk/archives/whitespace/2007-December/000065.html)
+Posted [2007-12-10 10:07:39 +0000](https://web.archive.org/web/20161009051032/http://compsoc.dur.ac.uk/archives/whitespace/2007-December/000065.html)
 
 Hey, if you're reading through the archive history, and updating the
 website, I should probably mention that the link to my python ws
